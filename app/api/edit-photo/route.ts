@@ -147,7 +147,7 @@ class PhotoEditingEngine {
     })).slice(0, 5) || []
     
     const faces = result.faceAnnotations?.length || 0
-    const textDetected = result.textAnnotations?.map((text: { description?: string }) => text.description).filter(t => t && t.length > 1) || []
+    const textDetected = result.textAnnotations?.map((text: { description?: string }) => text.description).filter((t: any) => t && t.length > 1) || []
     const landmarks = result.landmarkAnnotations?.map((landmark: { description?: string }) => landmark.description || '') || []
     const logos = result.logoAnnotations?.map((logo: { description?: string }) => logo.description || '') || []
     const webEntities = result.webDetection?.webEntities?.slice(0, 5).map((entity: { description?: string; score?: number }) => ({
@@ -156,8 +156,8 @@ class PhotoEditingEngine {
     })) || []
     
     // Enhanced image categorization
-    const highConfidenceLabels = labels.filter(l => l.confidence > 75).map(l => l.name)
-    const imageType = this.categorizeImage(highConfidenceLabels, objects.map(o => o.name), faces > 0)
+    const highConfidenceLabels = labels.filter((l: any) => l.confidence > 75).map((l: any) => l.name)
+    const imageType = this.categorizeImage(highConfidenceLabels, objects.map((o: any) => o.name), faces > 0)
     
     // Detailed composition analysis
     const composition = this.analyzeComposition(objects, colors, faces)

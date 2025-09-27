@@ -10,7 +10,7 @@ interface SmartContentRequest {
   research?: any
 }
 
-export class SmartContentGenerator {
+class SmartContentGenerator {
   
   static generateEnhancedProductDescription(analysis: any): string {
     const { labels, objects, category, colors } = analysis
@@ -248,40 +248,35 @@ export class SmartContentGenerator {
   }
 }
 
+// Next.js route handlers
 export async function POST(request: NextRequest) {
   try {
-    const body: SmartContentRequest = await request.json()
-    const { labels, objects, category, colors, contentType, research } = body
+    const data: SmartContentRequest = await request.json()
+    const { labels, objects, category, contentType } = data
 
-    console.log('🧠 SMART CONTENT GENERATION:')
-    console.log('📂 Category:', category)
-    console.log('🏷️ Labels:', labels?.length || 0)
-    console.log('📦 Objects:', objects?.length || 0)
-
-    const analysis = { labels, objects, category, colors, research }
-    let content = ''
-
-    switch (contentType) {
-      case 'product-description':
-        content = EnhancedContentGenerator.generateEnhancedProductDescription(analysis)
-        break
-      case 'social-media':
-        content = EnhancedContentGenerator.generateSocialMediaContent(analysis)
-        break
-      default:
-        content = EnhancedContentGenerator.generateEnhancedProductDescription(analysis)
-    }
+    const analysis = { labels, objects, category, colors: data.colors || [] }
+    const content = SmartContentGenerator.generateEnhancedProductDescription(analysis)
 
     return NextResponse.json({
       success: true,
       content,
-      processingTime: Date.now()
+      contentType,
+      generated: true
     })
 
   } catch (error) {
-    return NextResponse.json(
-      { success: false, error: 'Content generation failed' },
-      { status: 500 }
-    )
+    console.error('Smart content generation error:', error)
+    return NextResponse.json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Content generation failed'
+    }, { status: 500 })
   }
+}
+
+export async function GET() {
+  return NextResponse.json({
+    status: 'ready',
+    service: 'smart-content-generator',
+    capabilities: ['enhanced-descriptions', 'brand-detection', 'quality-assessment']
+  })
 }

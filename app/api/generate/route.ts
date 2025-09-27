@@ -342,13 +342,19 @@ This is a placeholder response showing what your AI-generated content would look
       setTimeout(() => reject(new Error('Google AI content creation timeout')), timeout)
     )
   }
+
+  async generateWithSLA(prompt: string, options: any): Promise<string> {
+    // For now, return a placeholder that matches the expected interface
+    // This can be implemented with actual Google AI image generation later
+    return `https://via.placeholder.com/512x512?text=Google+AI+Generated`
+  }
 }
 
 // Provider factory
 const getGenerationEngine = (provider: 'openai' | 'google' = 'openai') => {
   try {
     if (provider === 'google') {
-      return new GoogleAIGenerationEngine()
+      return new GoogleAIContentEngine()
     } else {
       return new OpenAIGenerationEngine()  
     }
@@ -504,7 +510,6 @@ export async function POST(request: NextRequest) {
             provider
           }
         }
-      }
 
       return NextResponse.json(response, {
         headers: {
@@ -514,12 +519,12 @@ export async function POST(request: NextRequest) {
         }
       })
 
-    } catch (generationError) {
-      const processingTime = Date.now() - startTime
-      console.error(`❌ ${provider.toUpperCase()} Generation Error:`, generationError)
-      console.log('⏱️ Failed after:', `${processingTime}ms`)
-      
-      return NextResponse.json(
+  } catch (generationError) {
+    const processingTime = Date.now() - startTime
+    console.error(`❌ ${provider.toUpperCase()} Generation Error:`, generationError)
+    console.log('⏱️ Failed after:', `${processingTime}ms`)
+    
+    return NextResponse.json(
         { 
           success: false, 
           error: generationError instanceof Error ? generationError.message : `${provider} generation failed`,
@@ -531,18 +536,6 @@ export async function POST(request: NextRequest) {
         { status: 500 }
       )
     }
-
-  } catch (error) {
-    console.error('❌ API Route Error:', error)
-    
-    return NextResponse.json(
-      { 
-        success: false, 
-        error: error instanceof Error ? error.message : 'Request processing failed'
-      },
-      { status: 500 }
-    )
-  }
 }
 
 // Health check endpoint

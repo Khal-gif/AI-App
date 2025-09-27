@@ -350,7 +350,7 @@ Format for maximum conversion and searchability.`
 
       // Smart category detection
       let category = 'Product'
-      const allText = [...labels.map(l => l.name), ...objects.map(o => o.name), ...texts].join(' ').toLowerCase()
+      const allText = [...labels.map((l: any) => l?.name || ''), ...objects.map((o: any) => o?.name || ''), ...texts].join(' ').toLowerCase()
       
       if (allText.includes('headphone') || allText.includes('headset') || allText.includes('earphone') || allText.includes('earbud') || allText.includes('audio') || allText.includes('speaker')) {
         category = 'Audio/Headphones'
@@ -406,11 +406,11 @@ Format for maximum conversion and searchability.`
         generatedContent: response,
         productAnalysis: {
           category,
-          labels: labels.map(l => l.name),
-          objects: objects.map(o => o.name),
-          colors: colors.map(c => c.rgb),
-          detectedText: texts.filter(t => t.length > 2),
-          features: labels.slice(0, 5).map(l => l.name)
+          labels: labels.map((l: any) => l?.name || ''),
+          objects: objects.map((o: any) => o?.name || ''),
+          colors: colors.map((c: any) => c.rgb),
+          detectedText: texts.filter((t: any) => t.length > 2),
+          features: labels.slice(0, 5).map((l: any) => l?.name || '')
         },
         processingTime,
         aiProvider: 'Google Cloud Vision API + Smart Content Generation',
